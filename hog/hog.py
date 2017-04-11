@@ -1,4 +1,4 @@
-"""CS 61A Presents The Game of Hog."""
+"""The Game of Hog."""
 
 from dice import four_sided, six_sided, make_test_dice
 from ucb import main, trace, log_current_line, interact
@@ -6,7 +6,7 @@ from ucb import main, trace, log_current_line, interact
 GOAL_SCORE = 100  # The goal of Hog is to score 100 points.
 
 ######################
-# Phase 1: Simulator #
+# Part 1: Simulator #
 ######################
 
 def roll_dice(num_rolls, dice=six_sided):
@@ -14,10 +14,8 @@ def roll_dice(num_rolls, dice=six_sided):
     the outcomes unless any of the outcomes is 1. In that case, return the
     number of 1's rolled (capped at 11 - NUM_ROLLS).
     """
-    # These assert statements ensure that num_rolls is a positive integer.
     assert type(num_rolls) == int, 'num_rolls must be an integer.'
     assert num_rolls > 0, 'Must roll at least once.'
-    # BEGIN PROBLEM 1
     assert num_rolls <= 10
     rolls, sum_out, ones = 0, 0, 0
 
@@ -32,12 +30,10 @@ def roll_dice(num_rolls, dice=six_sided):
         return min(11 - num_rolls, ones)
     else:
         return sum_out
-    # END PROBLEM 1
 
 
 def free_bacon(opponent_score):
     """Return the points scored from rolling 0 dice (Free Bacon)."""
-    # BEGIN PROBLEM 2
     assert (opponent_score) <= 99
     if opponent_score == 0:
         return 1
@@ -45,10 +41,8 @@ def free_bacon(opponent_score):
         return opponent_score + 1
     else:
         return max(opponent_score % 10, opponent_score // 10) + 1
-    # END PROBLEM 2
 
 
-# def prime_determinator(n):
 def is_prime(x):
     "checks if a number is prime"
     if x >= 2:
@@ -58,6 +52,7 @@ def is_prime(x):
     else:
         return False
     return True
+
 
 def hogtimus_prime(int):
     "implements Hogtimus prime rule if players score is prime"
@@ -77,12 +72,11 @@ def take_turn(num_rolls, opponent_score, dice=six_sided):
     opponent_score:  The total score of the opponent.
     dice:            A function of no args that returns an integer outcome.
     """
-    # Leave these assert statements here; they help check for errors.
     assert type(num_rolls) == int, 'num_rolls must be an integer.'
     assert num_rolls >= 0, 'Cannot roll a negative number of dice in take_turn.'
     assert num_rolls <= 10, 'Cannot roll more than 10 dice.'
     assert opponent_score < 100, 'The game should be over.'
-    # BEGIN PROBLEM 2
+
     if num_rolls== 0:
         if is_prime(free_bacon(opponent_score)):
             return hogtimus_prime(free_bacon(opponent_score))
@@ -94,33 +88,30 @@ def take_turn(num_rolls, opponent_score, dice=six_sided):
             return hogtimus_prime(sum)
         else:
             return sum
-    # END PROBLEM 2
 
 
 def select_dice(score, opponent_score):
     """Select six-sided dice unless the sum of SCORE and OPPONENT_SCORE is a
     multiple of 7, in which case select four-sided dice (Hog Wild).
     """
-    # BEGIN PROBLEM 3
     if score % 7 == 0 and opponent_score % 7 == 0:
         return four_sided
     elif ((score + opponent_score) % 7 == 0):
         return four_sided
     else:
         return six_sided
-    # END PROBLEM 3
+
 
 def is_swap(score0, score1):
     """Returns whether one of the scores is double the other.
     """
-    # BEGIN PROBLEM 4
     if score1 - score0 == score0:
         return True
     elif score0 - score1 == score1:
         return True
     else:
         return False
-    # END PROBLEM 4
+
 
 def other(player):
     """Return the other player, for a player PLAYER numbered 0 or 1.
@@ -147,7 +138,7 @@ def play(strategy0, strategy1, score0=0, score1=0, goal=GOAL_SCORE):
     score1   :  The starting score for Player 1
     """
     player = 0  # Which player is about to take a turn, 0 (first) or 1 (second)
-    # BEGIN PROBLEM 5
+
     assert score0 < 100, 'The game should be over.'
     assert score1 < 100, 'The game should be over.'
     while score0 < goal and score1 < goal:
@@ -172,12 +163,12 @@ def play(strategy0, strategy1, score0=0, score1=0, goal=GOAL_SCORE):
         elif player==0:
             score1=score
             score0= opponent_score
-    # END PROBLEM 5
+
     return score0, score1
 
 
 #######################
-# Phase 2: Strategies #
+# Part 2: Strategies #
 #######################
 
 def always_roll(n):
@@ -248,7 +239,7 @@ def check_strategy(strategy, goal=GOAL_SCORE):
      ...
     AssertionError: strategy(102, 115) returned 100 (invalid number of rolls)
     """
-    # BEGIN PROBLEM 6
+
     assert goal <= 100
     score, num_rolls = 0,0
     while score < goal or score < 100:
@@ -259,8 +250,8 @@ def check_strategy(strategy, goal=GOAL_SCORE):
             opponent_score +=1
         score += 1
     return None
-    # END PROBLEM 6
-# Experiments
+
+# Simulation / Experiements
 
 def make_averaged(fn, num_samples=1000):
     """Return a function that returns the average_value of FN when called.
@@ -273,7 +264,7 @@ def make_averaged(fn, num_samples=1000):
     >>> averaged_dice()
     3.75
     """
-    # BEGIN PROBLEM 7
+
     def average(*args) :
         total, bekfast = 0, 0
         while bekfast < num_samples :
@@ -281,7 +272,7 @@ def make_averaged(fn, num_samples=1000):
             bekfast += 1
         return total/num_samples
     return average
-    # END PROBLEM 7
+
 
 def max_scoring_num_rolls(dice=six_sided, num_samples=1000):
     """Return the number of dice (1 to 10) that gives the highest average turn
@@ -292,7 +283,6 @@ def max_scoring_num_rolls(dice=six_sided, num_samples=1000):
     >>> max_scoring_num_rolls(dice)
     10
     """
-    # BEGIN PROBLEM 8
     num_roll, max_roll, max_num = 1, 0, 0
 
     avg = make_averaged(roll_dice,num_samples)
@@ -304,7 +294,6 @@ def max_scoring_num_rolls(dice=six_sided, num_samples=1000):
         num_roll += 1
 
     return max_roll
-    # END PROBLEM 8
 
 def winner(strategy0, strategy1):
     """Return 0 if strategy0 wins against strategy1, and 1 otherwise."""
@@ -351,12 +340,12 @@ def bacon_strategy(score, opponent_score, margin=8, num_rolls=4):
     """This strategy rolls 0 dice if that gives at least MARGIN points,
     and rolls NUM_ROLLS otherwise.
     """
-    # BEGIN PROBLEM 9
+
     if take_turn(0 , opponent_score ) >= margin:
         return 0
     else:
         return num_rolls
-    # END PROBLEM 9
+
 check_strategy(bacon_strategy)
 
 
@@ -365,7 +354,7 @@ def swap_strategy(score, opponent_score, margin=8, num_rolls=4):
     rolls 0 dice if it gives at least MARGIN points. Otherwise, it rolls
     NUM_ROLLS.
     """
-    # BEGIN PROBLEM 10
+
     bekfast = free_bacon(opponent_score)
     if is_prime(bekfast):
         bekfast = hogtimus_prime(bekfast)
@@ -376,37 +365,23 @@ def swap_strategy(score, opponent_score, margin=8, num_rolls=4):
     if temp_score * 2 == opponent_score:
         return 0
     return num_rolls
-    # END PROBLEM 10
+
 check_strategy(swap_strategy)
 
 def final_strategy(score, opponent_score):
-    """Write a brief description of your final strategy.
 
-For our final strategy we applied the bacon strategy if our score was larger
-than 88 and we only needed a few points to win the game. We choose 5 as our
-margin and 3 as the alternative number of dice rolled as that gave us the best
-results. For our final strategy we also applied the swap strategy if our score
-was at least 9 higher than the opponent score or our score was above 80 in order
-to limit the number of points the opponent could get to catch up as a 4-sided
-dice on average will return fewer points than a six-sided dice."""
-
-
-    # BEGIN PROBLEM 11
     if score > 88:
         return bacon_strategy(score, opponent_score, 5, 3)
     elif (score - opponent_score) > 9 or score >= 80:
         return swap_strategy(score, opponent_score, 8, 5)
     return swap_strategy(score, opponent_score, 11, 5)
-    # END PROBLEM 11
+
 check_strategy(final_strategy)
 
 
 ##########################
 # Command Line Interface #
 ##########################
-
-# NOTE: Functions in this section do not need to be changed. They use features
-# of Python not yet covered in the course.
 
 @main
 def run(*args):
